@@ -65,11 +65,11 @@ library(officer)
 
 # Paths
 
-data_path_in <- "C:/WBG/GitHub/Growing-Good-Jobs"
+data_path_in <- "C:/WBG/GitHub/Syntesis-Report-WWBI-Figures"
 
-data_path_out <- "C:/WBG/GitHub/Growing-Good-Jobs/Outputs/wwbi"
+data_path_out <- "C:/WBG/GitHub/Syntesis-Report-WWBI-Figures/Outputs/wwbi"
 
-data_path <- "C:/WBG/GitHub/Growing-Good-Jobs"
+data_path <- "C:/WBG/GitHub/Syntesis-Report-WWBI-Figures"
 
 
 

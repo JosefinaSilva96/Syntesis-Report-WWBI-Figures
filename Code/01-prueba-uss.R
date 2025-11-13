@@ -403,3 +403,96 @@ ggsave(file.path(data_path_out, "Grafico_reg_2.png"), grafico_regresion_ext, wid
 
 
 #Pregunta 11----
+
+# Puntos extremos 
+
+punto_min <- datos %>% slice_min(precio, n = 1)
+punto_max <- datos %>% slice_max(precio, n = 1)
+
+puntos_extremos <- bind_rows(
+  mutate(punto_min, tipo = "Mínimo precio"),
+  mutate(punto_max, tipo = "Máximo precio")
+)
+
+# Agregar valores predichos y residuales
+puntos_extremos <- puntos_extremos %>%
+  mutate(
+    precio_predicho = predict(modelo, newdata = .),
+    residual        = precio - precio_predicho
+  )
+
+puntos_extremos
+
+#Grafico 
+
+grafico_regresion_ext2 <- ggplot(datos, aes(x = dd, y = precio)) +
+  # puntos normales
+  geom_point(color = "steelblue", size = 3, alpha = 0.7) +
+  
+  # línea de regresión
+  geom_smooth(method = "lm", color = "red", se = FALSE, size = 1.2) +
+  
+  # puntos observados extremos (mínimo y máximo precio)
+  geom_point(
+    data = puntos_extremos,
+    aes(x = dd, y = precio, shape = tipo),
+    color = "black",
+    fill  = "orange",
+    size  = 4,
+    stroke = 1
+  ) +
+  
+ 
+  geom_point(
+    data = puntos_extremos,
+    aes(x = dd, y = precio_predicho),
+    color = "green",
+    size  = 3
+  ) +
+  
+  # segmentos verticales (residuales: observado - predicho)
+  geom_segment(
+    data = puntos_extremos,
+    aes(
+      x = dd, xend = dd,
+      y = precio_predicho, yend = precio
+    ),
+    linetype = "dashed",
+    color = "purple",
+    linewidth = 0.8
+  ) +
+  
+  labs(
+    title = NULL,
+    x = "Capacidad del disco duro (GB)",
+    y = "Precio (miles de pesos)",
+    shape = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.text  = element_text(color = "black"),
+    axis.title = element_text(color = "black")
+  )
+
+grafico_regresion_ext2
+
+#Save plot
+
+ggsave(file.path(data_path_out, "Grafico_reg_3.png"), grafico_regresion_ext2, width = 15, height = 6, dpi = 300)
+
+#El punto negro: precio observado del computador (mínimo o máximo).
+#El punto verde: precio predicho por el modelo para ese mismo dd
+#La línea punteada morada: el residual (diferencia entre observado y predicho).
+
+
+#Pregunta 12----
+
+#El modelo de regresion por MCO estima B cero y B uno de una regresion lineal buscando la recta que mejor se ajusta a los datos que tenemos. 
+#En términos formales, MCO elige los valores de los coeficientes que minimizan la suma de los residuos al cuadrado. 
+#Los puntos azules son los valores observados de precio y capacidad del disco duro.
+#La línea roja es la recta ajustada por MCO. 
+#Los puntos verdes en la línea son los valores predichos para cada observación.
+#Las líneas verticales punteadas representan los residuales (la distancia entre cada punto observado y la recta).
+#MCO elige la recta que hace que estas distancias (residuales) sean lo más pequeñas posible en promedio, pero ponderadas de forma cuadrática.
+

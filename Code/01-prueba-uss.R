@@ -50,6 +50,7 @@ library(forcats)
 library(readxl)
 library(stringi)  
 library(readxl)
+library(ggplot2)
 
 
 #Directorios---- AQUI CAMBIAR!  
@@ -184,5 +185,221 @@ table(datos$dd)
 
 #Pregunta 4----
 
+#Calcular varianza
+
+cov_pc <- cov(datos$precio, datos$dd, use = "complete.obs")
+cov_pc #18654.71
+
+#Interpretacion
+
+#Tenemos una covarianza positiva de 18654.71 entre el precio y la capacidad del disco duro.
+#Esto indica que a medida que aumenta la capacidad del disco duro, también tiende a aumentar el precio del computador.
+
+#Calcular correlacion 
+
+cor_pc <- cor(datos$precio, datos$dd, use = "complete.obs")
+cor_pc #0.5376049
+
+#Interpretacion 
+#Una correlacion de casi 0.54 es una relacion positiva entre los discos duros y el precio del computador. 
+#Eso si esta relacion no es perfecta, ya que una correlacion perfecta seria 1. Por lo que tampoco significa causalidad.
 
 
+#Grafico 
+
+graf_correlacion <- ggplot(datos, aes(x = dd, y = precio)) +
+  geom_point(color = "steelblue", size = 3, alpha = 0.7) +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  labs(
+    title = NULL,
+    x = "Capacidad del disco duro (GB)",
+    y = "Precio (miles de pesos)"
+  ) +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.text = element_text(color = "black"),
+    axis.title = element_text(color = "black")
+  )
+
+graf_correlacion
+
+#Save plot 
+
+ggsave(file.path(data_path_out, "Correlacion.png"), graf_correlacion, width = 15, height = 6, dpi = 300)
+
+#Interpretacion grafico
+
+#El gráfico de dispersión muestra una relación positiva entre la capacidad del disco duro y el precio del computador.
+#La línea roja (ajuste lineal) tiene inclinación hacia arriba, confirmando que mayores capacidades de disco duro están asociadas a precios más altos.
+#pero tenemos dispersion en los puntos, lo que indica que aunque hay una tendencia general, no todos los computadores siguen esta relación de manera estricta.
+
+#Pregunta 5----
+
+#No, el precio y la capacidad del disco duro no son independientes estadísticamente.
+#Como sabemos dos variables son independientes si la covarianza entre ellas es cero.
+#En este caso, la covarianza entre el precio y la capacidad del disco duro es 18654.71, que es un valor positivo y diferente de cero.
+#Además, la correlación entre las dos variables es aproximadamente 0.54, lo que indica una relación positiva moderada entre ellas.
+
+#Pregunta 6----
+
+#precio como variable dependiente y dd como variable independiente
+
+#precioi=β0+β1*ddi+ui
+
+#modelo <- lm(precio ~ dd, data = datos)
+
+modelo <- lm(precio ~ dd, data = datos)
+
+summary(modelo)
+
+#Table export 
+
+tabla_regresion <- tibble(
+  Coeficiente = c("(Intercept)", "dd"),
+  Estimacion  = c(983.7568, 0.9933),
+  `Error Est.` = c(73.5207, 0.1889),
+  `t value`   = c(13.381, 5.258),
+  `Pr(>|t|)`  = c("< 2e-16", "1.59e-06")
+)
+
+tabla_flex_reg <- flextable(tabla_regresion) %>%
+  theme_vanilla() %>%
+  autofit() %>%
+  bold(part = "header") %>%
+  align(align = "center", part = "all") %>%
+  set_caption("Resultados de la regresión del precio sobre la capacidad del disco duro")
+
+read_docx() |>
+  body_add_par("Tabla: Resultados de la regresión", style = "heading 1") |>
+  body_add_flextable(tabla_flex_reg) |>
+  print(target = file.path(data_path_out, "tabla_regresion_precios.docx"))
+
+#Pregunta 7----
+
+
+#Interpretacion
+
+#Por cada 1 GB adicional de capacidad del disco duro, el precio del computador aumenta en promedio 0.993 miles de pesos, es decir, aproximadamente $993 pesos.
+#La relación es positiva y estadísticamente significativa al 1% (p-value = 1.59e-06).
+#R² = 0.289 Esto significa que aproximadamente el 28.9% de la variación en el precio se explica por la capacidad del disco duro.
+
+
+#Pregunta 8----
+
+#Calcular residuos 
+
+residuos <- resid(modelo)
+
+#Sumar residuos 
+
+suma_residuos <- sum(residuos)
+suma_residuos #4.249934e-13
+
+#Interpretacion 
+
+#La suma de los residuos es prácticamente cero (4.25e-13), lo que indica que el modelo de regresión lineal ajusta bien los datos en términos de minimizar la suma de los errores.
+#Esto se debe a que, en una regresión estimada por Mínimos Cuadrados Ordinarios (MCO) con intercepto, la suma de los residuos es exactamente cero por construcción matemática del método.
+
+#Pregunta 8----
+
+#Calcular valore predichos 
+
+valores_predichos <- predict(modelo)
+
+#Calcular el promedio de los valores predichos 
+
+promedio_predichos <- mean(valores_predichos)
+promedio_predichos #[1] 1345.903
+
+#Calcular el promedio del precio real 
+
+promedio_precio <- mean(datos$precio)
+promedio_precio #1345.903
+
+#Interpretacion 
+
+#Ambos valores son iguales. 
+#El promedio de los valores predichos por el modelo de regresión lineal es igual al promedio del precio real de los computadores en la muestra.
+#en una regresión estimada por Mínimos Cuadrados Ordinarios (MCO) que incluye un intercepto, el promedio de las predicciones siempre es igual al promedio de la variable dependiente.
+#Por eso ambos promedios son exactamente iguales (1345.903).
+
+
+#Pregunta 9----
+
+grafico_regresion <- ggplot(datos, aes(x = dd, y = precio)) +
+  geom_point(color = "steelblue", size = 3, alpha = 0.7) +        # puntos
+  geom_smooth(method = "lm", color = "red", se = FALSE, size = 1.2) + # línea de regresión
+  labs(
+    title = NULL,
+    x = "Capacidad del disco duro (GB)",
+    y = "Precio (miles de pesos)"
+  ) +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.text = element_text(color = "black"),
+    axis.title = element_text(color = "black")
+  )
+
+grafico_regresion
+
+#Save plot 
+
+ggsave(file.path(data_path_out, "Grafico_reg.png"), grafico_regresion, width = 15, height = 6, dpi = 300)
+
+#Interpretacion:
+#Los puntos azules representan cada computador
+#La línea roja es la recta de regresión estimada por MCO. 
+#Como la pendiente es positiva, se ve claramente que a mayor capacidad del disco duro, mayor precio promedio.
+
+
+#Pregunta 10----
+
+# Identificamos las observaciones con menor y mayor precio
+
+punto_min <- datos %>% slice_min(precio, n = 1)
+punto_max <- datos %>% slice_max(precio, n = 1)
+
+puntos_extremos <- bind_rows(
+  mutate(punto_min, tipo = "Mínimo precio"),
+  mutate(punto_max, tipo = "Máximo precio")
+)
+
+# Gráfico 
+
+grafico_regresion_ext <- ggplot(datos, aes(x = dd, y = precio)) +
+  geom_point(color = "steelblue", size = 3, alpha = 0.7) +                # puntos normales
+  geom_smooth(method = "lm", color = "red", se = FALSE, size = 1.2) +     # línea de regresión
+  geom_point(
+    data = puntos_extremos,
+    aes(x = dd, y = precio, shape = tipo),
+    color = "black",
+    fill = "orange",
+    size = 4,
+    stroke = 1
+  ) +
+  labs(
+    title = "Relación entre precio y capacidad del disco duro",
+    x = "Capacidad del disco duro (GB)",
+    y = "Precio (miles de pesos)",
+    shape = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.text = element_text(color = "black"),
+    axis.title = element_text(color = "black")
+  )
+
+grafico_regresion_ext
+
+#Save plot
+
+ggsave(file.path(data_path_out, "Grafico_reg_2.png"), grafico_regresion_ext, width = 15, height = 6, dpi = 300)
+
+#Todos los puntos normales en azul.
+#Dos puntos especiales (mínimo y máximo precio) en negro y distinta forma (leyenda “Mínimo precio” / “Máximo precio”).
+
+
+#Pregunta 11----

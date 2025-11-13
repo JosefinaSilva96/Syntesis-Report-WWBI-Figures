@@ -164,3 +164,25 @@ ggsave(file.path(data_path_out, "Histogram.png"), histogram, width = 15, height 
 
 #Interpretacion 
 
+#El histograma muestra que los precios de los computadores en la muestra no siguen una distribución normal como se ve en la figura.
+#La mayor parte de los computadores tiene precios entre $1.000.000 y $1.500.000. 
+#Por otro lado tenemos un cantidad pequeña de computadores con precios mucho mas altos sobre los 2 millones en la cola hacia la derecha. 
+#Como sabemos en una distribucion normal los datos se concentran alrededor del promdeio y tienen una forma de campana. 
+#En esta imagen tenemos mucho mas valores por debajo del promedios, es decir en la cola de la izquierda. 
+
+#Pregunta 3----
+
+sd_dd <- sd(datos$dd, na.rm = TRUE)
+sd_dd
+
+#Interpretacion
+#La desviacion estandar de la capacidad del disco duro de nuestra muestra es de 137.04 gb. 
+#Esto indica que en promcedio la capacidad de un disco duro de un computadore varia en 137.04 gb respecto al promedio de la muestra.
+#Esta variacion es relativamente alta lo que indica que en la muestra hay computadores con capacidades muy distintas entre sí: algunos con discos duros pequeños y otros con discos duros mucho mayores.
+
+table(datos$dd)
+
+#Pregunta 4----
+
+
+

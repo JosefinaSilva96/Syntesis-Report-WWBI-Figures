@@ -2,17 +2,17 @@
 
 #Reproducibility Figures present in this code:
 
-#Figure 1
-#Figure 2
-#Figure 3
-#Figure 4
-#Figure 5 
-#Figure B1
-#Figure B2
-#Figure B2
-#Figure 12
-#Figure 15
-#Figure 16 
+#Figure 2.1
+#Figure 2.2
+#Figure 2.3
+#Figure 2.4
+#Figure 2.5 
+#Figure 2.6
+#Figure 2.11
+#Figure 2.12
+#Figure 2.14
+#Figure 2.15
+
 
 # 04. Figures
 
@@ -75,7 +75,7 @@ data_path <- "C:/WBG/GitHub/Syntesis-Report-WWBI-Figures"
 
 # Graphs ----
 
-#Figure 1:Public sector employment per 1000 people
+#Figure 2.1:Public sector employment per 1000 people
 
 #Open data set 
 
@@ -146,9 +146,9 @@ f1
 
 #Save plot 
 
-ggsave(file.path(data_path_out, "Figure_1.png"), f1, width = 15, height = 6, dpi = 300)
+ggsave(file.path(data_path_out, "Figure_2.1.png"), f1, width = 15, height = 6, dpi = 300)
 
-#Figure 2: share of total public employees
+#Figure 2.2: share of total public employees
 
 #Load data set 
 
@@ -176,7 +176,7 @@ f2
 
 #Save plot 
 
-ggsave(file.path(data_path_out, "Figure_2.png"), f2, width = 10, height = 8, dpi = 300)
+ggsave(file.path(data_path_out, "Figure_2.2.png"), f2, width = 10, height = 8, dpi = 300)
 
 #Table
 
@@ -196,10 +196,10 @@ tbl_flex
 
 read_docx() |>
   body_add_flextable(tbl_flex) |>
-  print(target = file.path(data_path_out, "Table_figure2.docx"))
+  print(target = file.path(data_path_out, "Table_figure2.2.docx"))
 
 
-#Figure 3:Public sector employment 
+#Figure 2.3:Public sector employment 
 
 # Define a color palette for regions
 
@@ -238,7 +238,7 @@ plot_paid
 
 # Save the plot
 
-ggsave(file.path(data_path_out, "Figure_3.png"), plot_paid, width = 10, height = 8, dpi = 300)
+ggsave(file.path(data_path_out, "Figure_2.3.png"), plot_paid, width = 10, height = 8, dpi = 300)
 
 # 2 as percentage of formal employment
 
@@ -265,9 +265,9 @@ plot_formal
 
 # Save the plot
 
-ggsave(file.path(data_path_out, "Figure_3b.png"), plot_formal, width = 10, height = 8, dpi = 300)
+ggsave(file.path(data_path_out, "Figure_2.3b.png"), plot_formal, width = 10, height = 8, dpi = 300)
 
-#Figure 4: Public sector employment Non FCV and FCV countries
+#Figure 2.6: Public sector employment Non FCV and FCV countries
 
 #Load data set 
 
@@ -300,34 +300,10 @@ f4
 
 #Save 
 
-ggsave(file.path(data_path_out, "Figure_4.png"), f4, width = 15, height = 8, dpi = 300)
+ggsave(file.path(data_path_out, "Figure_2.6.png"), f4, width = 15, height = 8, dpi = 300)
 
-#Figure 5: Log GDP per capita vs Public sector employment
 
-#Load data set
-
-df_plot <- read_rds(file.path(data_path, "Data/out/data_f5.rds"))
-
-#Plot
-
-f5_total <- ggplot(df_plot, aes(x = log_gdp, y = value_percentage)) +
-  geom_point(size = 2, color = "#002244", alpha = 0.85, na.rm = TRUE) +
-  geom_smooth(method = "lm", color = "red", se = FALSE, na.rm = TRUE) +
-  scale_y_continuous(limits = c(0, 50),
-                     labels = scales::label_percent(scale = 1),
-                     expand = expansion(mult = c(0, 0.02))) +
-  labs(title = "", x = "Log of GDP per capita 2015", y = NULL) +
-  theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
-        legend.position = "none")
-
-f5_total
-
-# Save the plot
-
-ggsave(file.path(data_path_out, "Figure_5.png"), f5_total, width = 12, height = 8, dpi = 300)
-
-#Figure B1: indicador es females, as a share of public paid and private paid employment
+#Figure 2.4: females, as a share of public paid and private paid employment
 
 #Load data set 
 
@@ -369,10 +345,10 @@ fb1
 #Save 
 
 
-ggsave(file.path(data_path_out, "Figure_B1.png"), fb1, width = 12, height = 8, dpi = 300)
+ggsave(file.path(data_path_out, "Figure_2.4.png"), fb1, width = 12, height = 8, dpi = 300)
 
 
-#Figure B2: Public sector workforce 
+#Figure 2.5: Public sector workforce 
 
 #Load data set
 
@@ -419,9 +395,9 @@ fb2 <- ggplot(df_plotb2, aes(x = log_gdp, y = value_percentage, color = indicato
 fb2
 
 # Save the plot
-ggsave(file.path(data_path_out, "Figure_B2.png"), fb2, width = 12, height = 8, dpi = 300)
+ggsave(file.path(data_path_out, "Figure_2.5.png"), fb2, width = 12, height = 8, dpi = 300)
 
-#Figure 12: Public sector wage premium (compared to all private employees)
+#Figure 2.11: Public sector wage premium (compared to all private employees)
 
 #Load data set
 
@@ -429,7 +405,7 @@ df_plotf12 <- read_rds(file.path(data_path, "Data/out/df_plotf12.rds"))
 
 #  Plot
 
-f12 <- ggplot(df_plot, aes(x = log_gdp, y = value_percentage, color = wb_region)) +
+f12 <- ggplot(df_plotf12, aes(x = log_gdp, y = value_percentage, color = wb_region)) +
   geom_point(size = 2, alpha = 0.9) +
   labs(
     x = "Log GDP per capita (Constant 2015 USD)",
@@ -458,11 +434,11 @@ f12
 
 #Save
 
-ggsave(file.path(data_path_out, "Figure_12.png"), f12, width = 12, height = 8, dpi = 300)
+ggsave(file.path(data_path_out, "Figure_2.11.png"), f12, width = 12, height = 8, dpi = 300)
 
 
 
-#Figure 15: Public sector wage premium, by education level: Tertiary Education (compared to formal wage employees)
+#Figure 2.14: Public sector wage premium, by education level: Tertiary Education (compared to formal wage employees)
 
 #Load data set 
 
@@ -497,9 +473,9 @@ f15
 
 #Save
 
-ggsave(file.path(data_path_out, "Figure_15.png"), f15, width = 12, height = 8, dpi = 300)
+ggsave(file.path(data_path_out, "Figure_2.14.png"), f15, width = 12, height = 8, dpi = 300)
 
-#Figure 16: pay compression ratio (90/10th percentile) de private sector y de public sector
+#Figure 2.15: pay compression ratio (90/10th percentile) de private sector y de public sector
 
 #Load data set
 
@@ -521,5 +497,5 @@ f16
 
 #Save 
 
-ggsave(file.path(data_path_out, "Figure_16.png"), f16, width = 12, height = 8, dpi = 300)
+ggsave(file.path(data_path_out, "Figure_2.15.png"), f16, width = 12, height = 8, dpi = 300)
 
